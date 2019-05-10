@@ -1,0 +1,1 @@
+awk -F',' '/Quebec/ {print $3",", $9",", $10}' ca-cities-sample.csv > cities.csv
