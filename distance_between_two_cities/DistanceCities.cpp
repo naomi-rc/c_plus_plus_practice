@@ -8,8 +8,8 @@ using namespace std;
   Description: Calculates the distance between two cities and allows the user to specify a unit of distance
 */
 
-double claculateDistance(double lat1, double lat2, double long1, double long2);
-double degreeToRadians(double degrees);
+double claculateDistance(double lat1, double long1, double lat2, double long2);
+double degToRad(double degrees);
 
 int main(){
 	
@@ -36,7 +36,7 @@ int main(){
 	cin >> city2;
 	city2--;
 	
-	cout << "Units of distance:" << endl;
+	cout << endl << "Units of distance:" << endl;
 	for(int i = 0; i < 4; i++){
 		cout << i+1 << ") " << units[i] << endl;
 	}
@@ -48,13 +48,12 @@ int main(){
 	}while(unit < 1 || unit > 4);	
 	unit--;
 	
-	cout << coords[city1][0] << ", " << coords[city2][0] << ", " << coords[city1][1] << ", " << coords[city2][1] << endl << endl;
-	distance = claculateDistance(coords[city1][0], coords[city2][0], coords[city1][1], coords[city2][1]);
+	distance = claculateDistance(coords[city1][0], coords[city1][1], coords[city2][0], coords[city2][1]);
 	switch(unit){
-		case 1: /*nothing*/; break; //km
-		case 2: distance = distance * 1000; break; //m
-		case 3: distance = distance * 0.62137; break; //miles
-		case 4: distance= distance * 3280.8; break; //feet
+		case 0: /*nothing*/; break; //km
+		case 1: distance = distance * 1000; break; //m
+		case 2: distance = distance * 0.62137; break; //miles
+		case 3: distance= distance * 3280.8; break; //feet
 	}
 	
 	cout << "The distance between " << cities[city1] << " and " << cities[city2] << " is " << distance << " " << units[unit];
@@ -64,19 +63,19 @@ int main(){
 }
 
 
-double claculateDistance(double lat1, double lat2, double long1, double long2){
-	double R = 6371; //Radius of Earth in KM
-	double dLat = (lat2-lat1);
-	double dLong = (long2-long1);
+double claculateDistance(double lat1, double long1, double lat2, double long2){
+	double radius = 6371; //Radius of Earth in KM
+	double lat1rad = degToRad(lat1);
+	double long1rad = degToRad(long1);
+	double lat2rad = degToRad(lat2);
+	double long2rad = degToRad(long2);
 	
-	double a = sin(dLat/2) * sin(dLat/2) + cos(degreeToRadians(lat1)) * cos(degreeToRadians(lat2)) * sin(dLong/2) * sin(dLong/2);
-	double c = 2 * atan2(sqrt(a), sqrt(1-a));
-	double d = R * c; // Distance in km 
-	
-  	return d;		
+  	double a = sin((lat2rad - lat1rad)/2);
+  	double b = sin((long2rad - long1rad)/2);
+  	return 2.0 * radius * asin(sqrt(a * a + cos(lat1rad) * cos(lat2rad) * b * b));
 }
 
 
-double degreeToRadians(double degrees){
-	return degrees * (M_PI/180);
+double degToRad(double degrees){
+	return (degrees * M_PI / 180);
 }
